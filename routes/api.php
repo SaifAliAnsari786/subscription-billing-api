@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\SubscriptionController;
 
 // Get authenticated user details
 Route::get('/user', function (Request $request) {
@@ -17,5 +18,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Logout authenticated user
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    // Subscription routes
+    Route::post('/subscriptions', [SubscriptionController::class, 'store']);
+    Route::post('/subscriptions/{subscription}/cancel', [SubscriptionController::class, 'cancel']);
+    Route::post('/subscriptions/{subscription}/change-plan', [SubscriptionController::class, 'changePlan']);
 
 });
