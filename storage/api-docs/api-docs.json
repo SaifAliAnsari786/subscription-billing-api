@@ -215,6 +215,72 @@
                     }
                 ]
             }
+        },
+        "/api/usage": {
+            "post": {
+                "tags": [
+                    "Usage Events"
+                ],
+                "summary": "Record usage event",
+                "description": "Store a metered usage event for a customer.",
+                "operationId": "recordUsage",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "customer_id",
+                                    "metric",
+                                    "quantity",
+                                    "occurred_at",
+                                    "idempotency_key"
+                                ],
+                                "properties": {
+                                    "customer_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "metric": {
+                                        "type": "string",
+                                        "example": "api_calls"
+                                    },
+                                    "quantity": {
+                                        "type": "integer",
+                                        "example": 50
+                                    },
+                                    "occurred_at": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2026-06-22T10:00:00Z"
+                                    },
+                                    "idempotency_key": {
+                                        "type": "string",
+                                        "example": "usage-001"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Usage event recorded successfully"
+                    },
+                    "200": {
+                        "description": "Usage event already processed"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -234,6 +300,10 @@
         {
             "name": "Subscriptions",
             "description": "Subscriptions"
+        },
+        {
+            "name": "Usage Events",
+            "description": "Usage Events"
         }
     ]
 }
