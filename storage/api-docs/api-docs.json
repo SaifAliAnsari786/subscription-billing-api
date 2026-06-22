@@ -71,6 +71,79 @@
                 }
             }
         },
+        "/api/subscriptions/{subscription}/invoice": {
+            "post": {
+                "tags": [
+                    "Invoices"
+                ],
+                "summary": "Generate subscription invoice",
+                "description": "Generate a billing invoice for the selected subscription.",
+                "operationId": "generateInvoice",
+                "parameters": [
+                    {
+                        "name": "subscription",
+                        "in": "path",
+                        "description": "Subscription ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Invoice generated successfully"
+                    },
+                    "404": {
+                        "description": "Subscription not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/invoices": {
+            "get": {
+                "tags": [
+                    "Invoices"
+                ],
+                "summary": "List invoices",
+                "description": "Retrieve a paginated list of generated invoices.",
+                "operationId": "listInvoices",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Invoice list retrieved successfully"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/subscriptions": {
             "post": {
                 "tags": [
@@ -296,6 +369,10 @@
         {
             "name": "Authentication",
             "description": "Authentication"
+        },
+        {
+            "name": "Invoices",
+            "description": "Invoices"
         },
         {
             "name": "Subscriptions",
