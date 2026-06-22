@@ -1,0 +1,239 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Subscription Billing API",
+        "description": "REST API for Subscription Billing & Metering System",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000",
+            "description": "Local Development Server"
+        }
+    ],
+    "paths": {
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Login user",
+                "description": "Authenticate user and generate Sanctum access token.",
+                "operationId": "login",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "admin@test.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login successful"
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Logout user",
+                "description": "Logout authenticated user by deleting the current access token.",
+                "operationId": "logout",
+                "responses": {
+                    "200": {
+                        "description": "Logout successful"
+                    }
+                }
+            }
+        },
+        "/api/subscriptions": {
+            "post": {
+                "tags": [
+                    "Subscriptions"
+                ],
+                "summary": "Create a new subscription",
+                "description": "Subscribe a customer to a billing plan.",
+                "operationId": "createSubscription",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "customer_id",
+                                    "plan_id"
+                                ],
+                                "properties": {
+                                    "customer_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "plan_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Subscription created successfully"
+                    },
+                    "422": {
+                        "description": "Validation failed or customer already has an active subscription"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/subscriptions/{subscription}/cancel": {
+            "post": {
+                "tags": [
+                    "Subscriptions"
+                ],
+                "summary": "Cancel subscription",
+                "description": "Cancel an active subscription at the end of the current billing period.",
+                "operationId": "cancelSubscription",
+                "parameters": [
+                    {
+                        "name": "subscription",
+                        "in": "path",
+                        "description": "Subscription ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Subscription cancelled successfully"
+                    },
+                    "422": {
+                        "description": "Subscription already cancelled"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/subscriptions/{subscription}/change-plan": {
+            "post": {
+                "tags": [
+                    "Subscriptions"
+                ],
+                "summary": "Change subscription plan",
+                "description": "Upgrade or downgrade a subscription with proration calculation.",
+                "operationId": "changeSubscriptionPlan",
+                "parameters": [
+                    {
+                        "name": "subscription",
+                        "in": "path",
+                        "description": "Subscription ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "plan_id"
+                                ],
+                                "properties": {
+                                    "plan_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Subscription plan updated successfully"
+                    },
+                    "422": {
+                        "description": "Subscription already using selected plan"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "sanctum": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Authentication",
+            "description": "Authentication"
+        },
+        {
+            "name": "Subscriptions",
+            "description": "Subscriptions"
+        }
+    ]
+}

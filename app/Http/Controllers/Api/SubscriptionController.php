@@ -6,12 +6,57 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Plan;
 use App\Models\Subscription;
+use OpenApi\Attributes as OA;
 
 class SubscriptionController extends Controller
 {
     /**
      * Subscribe a customer to a plan.
      */
+
+    #[OA\Post(
+        path: '/api/subscriptions',
+        operationId: 'createSubscription',
+        tags: ['Subscriptions'],
+        summary: 'Create a new subscription',
+        description: 'Subscribe a customer to a billing plan.',
+        security: [['sanctum' => []]]
+    )]
+
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            required: ['customer_id', 'plan_id'],
+            properties: [
+                new OA\Property(
+                    property: 'customer_id',
+                    type: 'integer',
+                    example: 1
+                ),
+                new OA\Property(
+                    property: 'plan_id',
+                    type: 'integer',
+                    example: 1
+                ),
+            ]
+        )
+    )]
+
+    #[OA\Response(
+        response: 201,
+        description: 'Subscription created successfully'
+    )]
+
+    #[OA\Response(
+        response: 422,
+        description: 'Validation failed or customer already has an active subscription'
+    )]
+
+    #[OA\Response(
+        response: 500,
+        description: 'Internal server error'
+    )]
+
     public function store(Request $request)
     {
         try {
@@ -60,6 +105,41 @@ class SubscriptionController extends Controller
     /**
      * Cancel subscription at the end of the current billing period.
      */
+
+    #[OA\Post(
+        path: '/api/subscriptions/{subscription}/cancel',
+        operationId: 'cancelSubscription',
+        tags: ['Subscriptions'],
+        summary: 'Cancel subscription',
+        description: 'Cancel an active subscription at the end of the current billing period.',
+        security: [['sanctum' => []]]
+    )]
+
+    #[OA\Parameter(
+        name: 'subscription',
+        description: 'Subscription ID',
+        in: 'path',
+        required: true,
+        schema: new OA\Schema(
+            type: 'integer',
+            example: 1
+        )
+    )]
+
+    #[OA\Response(
+        response: 200,
+        description: 'Subscription cancelled successfully'
+    )]
+
+    #[OA\Response(
+        response: 422,
+        description: 'Subscription already cancelled'
+    )]
+
+    #[OA\Response(
+        response: 500,
+        description: 'Internal server error'
+    )]
     public function cancel(Subscription $subscription)
     {
         try {
@@ -99,6 +179,55 @@ class SubscriptionController extends Controller
     /**
      * Change subscription plan with proration.
      */
+
+    #[OA\Post(
+        path: '/api/subscriptions/{subscription}/change-plan',
+        operationId: 'changeSubscriptionPlan',
+        tags: ['Subscriptions'],
+        summary: 'Change subscription plan',
+        description: 'Upgrade or downgrade a subscription with proration calculation.',
+        security: [['sanctum' => []]]
+    )]
+
+    #[OA\Parameter(
+        name: 'subscription',
+        description: 'Subscription ID',
+        in: 'path',
+        required: true,
+        schema: new OA\Schema(
+            type: 'integer',
+            example: 1
+        )
+    )]
+
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            required: ['plan_id'],
+            properties: [
+                new OA\Property(
+                    property: 'plan_id',
+                    type: 'integer',
+                    example: 2
+                )
+            ]
+        )
+    )]
+
+    #[OA\Response(
+        response: 200,
+        description: 'Subscription plan updated successfully'
+    )]
+
+    #[OA\Response(
+        response: 422,
+        description: 'Subscription already using selected plan'
+    )]
+
+    #[OA\Response(
+        response: 500,
+        description: 'Internal server error'
+    )]
     public function changePlan(Request $request, Subscription $subscription)
     {
         try {

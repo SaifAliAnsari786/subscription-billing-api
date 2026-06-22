@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\UsageController;
+use App\Http\Controllers\Api\InvoiceController;
+
 
 // Get authenticated user details
 Route::get('/user', function (Request $request) {
@@ -27,5 +29,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Usage Events
     Route::post('/usage', [UsageController::class, 'store']);
+
+    // Invoice Routes
+    Route::post('/subscriptions/{subscription}/invoice', [InvoiceController::class, 'generate']);
+
+    // Invoice Routes
+    Route::get('/invoices', [InvoiceController::class, 'index']);
+    Route::post('/subscriptions/{subscription}/invoice', [InvoiceController::class, 'generate']);    
 
 });
