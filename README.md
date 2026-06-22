@@ -1,59 +1,311 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Subscription Billing & Metering API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Overview
 
-## About Laravel
+This project is a RESTful API built with Laravel 12 for managing subscription billing and usage-based invoicing. It provides subscription lifecycle management, usage event tracking, automated invoice generation, and role-based access control.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+The application is containerized using Docker and documented with Swagger (OpenAPI). Automated feature tests are included to verify the core business functionality.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Technology Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP 8.2
+- Laravel 12
+- MySQL
+- Redis
+- Laravel Sanctum
+- Docker & Docker Compose
+- Swagger (L5 Swagger)
 
-## Learning Laravel
+## Features
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Authentication
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- Login using Laravel Sanctum
+- Logout
+- Protected API endpoints
 
-## Laravel Sponsors
+### Subscription Management
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- Create a subscription
+- Change subscription plan with proration
+- Cancel subscription at the end of the billing period
+- Restrict customers to a single active subscription
 
-### Premium Partners
+### Usage Metering
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+- Record customer usage events
+- Idempotent request handling
+- Prevent duplicate usage records
 
-## Contributing
+### Billing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- Generate invoices
+- Calculate monthly subscription charges
+- Calculate overage charges
+- Apply tax
+- List invoices
+- View invoice details
 
-## Code of Conduct
+### Authorization
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- Administrators can access all invoices
+- Customers can access only their own invoices
 
-## Security Vulnerabilities
+### Additional Features
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- Scheduled invoice generation
+- Dockerized development environment
+- Swagger API documentation
+- Automated feature tests
 
-## License
+## Project Structure
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```text
+app/
+├── Console/
+├── Http/
+│   ├── Controllers/
+│   ├── Requests/
+│   └── Resources/
+├── Models/
+├── Services/
+
+database/
+├── migrations/
+├── factories/
+
+routes/
+
+tests/
+├── Feature/
+└── Unit/
+```
+
+## Getting Started
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/SaifAliAnsari786/subscription-billing-api.git
+cd subscription-billing-api
+```
+
+### Configure Environment
+
+```bash
+cp .env.example .env
+```
+
+### Start Docker Containers
+
+```bash
+docker-compose up -d --build
+```
+
+### Install Dependencies
+
+```bash
+docker-compose exec app composer install
+```
+
+### Generate Application Key
+
+```bash
+docker-compose exec app php artisan key:generate
+```
+
+### Run Database Migrations
+
+```bash
+docker-compose exec app php artisan migrate
+```
+
+## Running the Application
+
+Application URL
+
+```text
+http://localhost:8000
+```
+
+## Docker Commands
+
+Start containers
+
+```bash
+docker-compose up -d
+```
+
+Stop containers
+
+```bash
+docker-compose down
+```
+
+View running containers
+
+```bash
+docker-compose ps
+```
+
+Access the application container
+
+```bash
+docker-compose exec app bash
+```
+
+## Common Artisan Commands
+
+Run migrations
+
+```bash
+docker-compose exec app php artisan migrate
+```
+
+Generate Swagger documentation
+
+```bash
+docker-compose exec app php artisan l5-swagger:generate
+```
+
+Run automated tests
+
+```bash
+docker-compose exec app php artisan test
+```
+
+Generate invoices manually
+
+```bash
+docker-compose exec app php artisan billing:generate-invoices
+```
+
+Run scheduled tasks
+
+```bash
+docker-compose exec app php artisan schedule:run
+```
+
+Clear application cache
+
+```bash
+docker-compose exec app php artisan optimize:clear
+```
+
+## API Documentation
+
+Generate Swagger documentation
+
+```bash
+docker-compose exec app php artisan l5-swagger:generate
+```
+
+Swagger UI
+
+```text
+http://localhost:8000/api/documentation
+```
+
+## Authentication
+
+Login endpoint
+
+```http
+POST /api/login
+```
+
+Use the returned Bearer token when accessing protected endpoints.
+
+Example:
+
+```text
+Authorization: Bearer YOUR_ACCESS_TOKEN
+```
+
+## API Endpoints
+
+### Authentication
+
+| Method | Endpoint |
+|--------|----------|
+| POST | `/api/login` |
+| POST | `/api/logout` |
+
+### Subscriptions
+
+| Method | Endpoint |
+|--------|----------|
+| POST | `/api/subscriptions` |
+| POST | `/api/subscriptions/{subscription}/change-plan` |
+| POST | `/api/subscriptions/{subscription}/cancel` |
+
+### Usage Events
+
+| Method | Endpoint |
+|--------|----------|
+| POST | `/api/usage` |
+
+### Invoices
+
+| Method | Endpoint |
+|--------|----------|
+| POST | `/api/subscriptions/{subscription}/invoice` |
+| GET | `/api/invoices` |
+| GET | `/api/invoices/{invoice}` |
+
+## Running Tests
+
+Execute the automated test suite.
+
+```bash
+docker-compose exec app php artisan test
+```
+
+Current test coverage includes:
+
+- Authentication
+- Subscription Management
+- Usage Events
+- Invoice APIs
+
+## Scheduled Invoice Generation
+
+Generate invoices manually
+
+```bash
+docker-compose exec app php artisan billing:generate-invoices
+```
+
+Run the scheduler
+
+```bash
+docker-compose exec app php artisan schedule:run
+```
+
+## Assignment Coverage
+
+This implementation includes:
+
+- Authentication using Laravel Sanctum
+- Subscription management
+- Plan changes with proration
+- Subscription cancellation
+- Usage metering
+- Idempotent event processing
+- Invoice generation
+- Overage billing
+- Tax calculation
+- Invoice listing
+- Invoice details
+- Role-based authorization
+- Docker support
+- Swagger documentation
+- Automated feature tests
+
+## Author
+
+**Saif Ali Ansari**
+
+Laravel Developer
+
+GitHub: https://github.com/SaifAliAnsari786/subscription-billing-api
