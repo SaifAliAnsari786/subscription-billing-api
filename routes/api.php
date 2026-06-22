@@ -30,11 +30,13 @@ Route::middleware('auth:sanctum')->group(function () {
     // Usage Events
     Route::post('/usage', [UsageController::class, 'store']);
 
-    // Invoice Routes
-    Route::post('/subscriptions/{subscription}/invoice', [InvoiceController::class, 'generate']);
 
     // Invoice Routes
+    Route::post('/subscriptions/{subscription}/invoice', [InvoiceController::class, 'generate']);
     Route::get('/invoices', [InvoiceController::class, 'index']);
-    Route::post('/subscriptions/{subscription}/invoice', [InvoiceController::class, 'generate']);    
+
+    // Read Single Invoice
+    Route::get('/invoices/{invoice}', [InvoiceController::class, 'show']);
+    
 
 });

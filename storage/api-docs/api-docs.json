@@ -83,7 +83,6 @@
                     {
                         "name": "subscription",
                         "in": "path",
-                        "description": "Subscription ID",
                         "required": true,
                         "schema": {
                             "type": "integer",
@@ -97,9 +96,6 @@
                     },
                     "404": {
                         "description": "Subscription not found"
-                    },
-                    "500": {
-                        "description": "Internal server error"
                     }
                 },
                 "security": [
@@ -115,14 +111,36 @@
                     "Invoices"
                 ],
                 "summary": "List invoices",
-                "description": "Retrieve a paginated list of generated invoices.",
+                "description": "Retrieve a paginated list of invoices.",
                 "operationId": "listInvoices",
+                "responses": {
+                    "200": {
+                        "description": "Invoice list retrieved successfully"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/invoices/{invoice}": {
+            "get": {
+                "tags": [
+                    "Invoices"
+                ],
+                "summary": "View invoice details",
+                "description": "Retrieve details of a specific invoice.",
+                "operationId": "showInvoice",
                 "parameters": [
                     {
-                        "name": "page",
-                        "in": "query",
-                        "description": "Page number",
-                        "required": false,
+                        "name": "invoice",
+                        "in": "path",
+                        "required": true,
                         "schema": {
                             "type": "integer",
                             "example": 1
@@ -131,10 +149,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Invoice list retrieved successfully"
+                        "description": "Invoice retrieved successfully"
                     },
-                    "500": {
-                        "description": "Internal server error"
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Invoice not found"
                     }
                 },
                 "security": [

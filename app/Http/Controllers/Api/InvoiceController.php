@@ -36,31 +36,22 @@ class InvoiceController extends Controller
         description: 'Generate a billing invoice for the selected subscription.',
         security: [['sanctum' => []]]
     )]
-
     #[OA\Parameter(
         name: 'subscription',
         in: 'path',
         required: true,
-        description: 'Subscription ID',
         schema: new OA\Schema(
             type: 'integer',
             example: 1
         )
     )]
-
     #[OA\Response(
         response: 200,
         description: 'Invoice generated successfully'
     )]
-
     #[OA\Response(
         response: 404,
         description: 'Subscription not found'
-    )]
-
-    #[OA\Response(
-        response: 500,
-        description: 'Internal server error'
     )]
     public function generate(Subscription $subscription)
     {
@@ -77,40 +68,88 @@ class InvoiceController extends Controller
         operationId: 'listInvoices',
         tags: ['Invoices'],
         summary: 'List invoices',
-        description: 'Retrieve a paginated list of generated invoices.',
+        description: 'Retrieve a paginated list of invoices.',
         security: [['sanctum' => []]]
     )]
+    #[OA\Response(
+        response: 200,
+        description: 'Invoice list retrieved successfully'
+    )]
+    #[OA\Response(
+        response: 403,
+        description: 'Forbidden'
+    )]
+    public function index()
+    {
+        $query = Invoice::with([
+            'customer',
+            'subscription',
+            'items',
+        ]);
 
+        // Customer can only view their own invoices
+        if (auth()->user()->role === 'customer') {
+
+            $query->whereHas('customer', function ($query) {
+                $query->where('user_id', auth()->id());
+            });
+        }
+
+        return new InvoiceCollection(
+            $query->latest()->paginate(10)
+        );
+    }
+
+    /**
+     * Display a single invoice.
+     */
+    #[OA\Get(
+        path: '/api/invoices/{invoice}',
+        operationId: 'showInvoice',
+        tags: ['Invoices'],
+        summary: 'View invoice details',
+        description: 'Retrieve details of a specific invoice.',
+        security: [['sanctum' => []]]
+    )]
     #[OA\Parameter(
-        name: 'page',
-        in: 'query',
-        required: false,
-        description: 'Page number',
+        name: 'invoice',
+        in: 'path',
+        required: true,
         schema: new OA\Schema(
             type: 'integer',
             example: 1
         )
     )]
-
     #[OA\Response(
         response: 200,
-        description: 'Invoice list retrieved successfully'
+        description: 'Invoice retrieved successfully'
     )]
-
     #[OA\Response(
-        response: 500,
-        description: 'Internal server error'
+        response: 403,
+        description: 'Forbidden'
     )]
-    public function index()
+    #[OA\Response(
+        response: 404,
+        description: 'Invoice not found'
+    )]
+    public function show(Invoice $invoice)
     {
-        $invoices = Invoice::with([
-            'customer',
-            'subscription',
-            'items'
-        ])
-        ->latest()
-        ->paginate(10);
+        // Customer can only access their own invoice
+        if (
+            auth()->user()->role === 'customer' &&
+            $invoice->customer->user_id !== auth()->id()
+        ) {
+            return response()->json([
+                'message' => 'You are not authorized to access this invoice.'
+            ], 403);
+        }
 
-        return new InvoiceCollection($invoices);
+        return new InvoiceResource(
+            $invoice->load([
+                'customer',
+                'subscription',
+                'items',
+            ])
+        );
     }
 }

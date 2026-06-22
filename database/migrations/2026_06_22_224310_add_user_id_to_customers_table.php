@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('customers', function (Blueprint $table) {
 
-            $table->enum('role', [
-                'admin',
-                'customer'
-            ])->default('customer')->after('password');
+            $table->foreignId('user_id')
+                ->nullable()
+                ->after('id')
+                ->constrained()
+                ->nullOnDelete();
 
         });
     }
@@ -26,9 +27,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('customers', function (Blueprint $table) {
 
-            $table->dropColumn('role');
+            $table->dropConstrainedForeignId('user_id');
 
         });
     }
