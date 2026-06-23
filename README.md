@@ -139,6 +139,14 @@ This command creates:
 - Sample customer
 - Active subscription
 
+### Clean Checkout Verification
+
+After copying `.env.example` to `.env` and starting Docker, this single command installs dependencies, prepares the app, seeds data, and runs the test suite:
+
+```bash
+docker-compose exec app sh -lc "composer install && php artisan key:generate && php artisan migrate:fresh --seed && php artisan test"
+```
+
 ---
 
 ## Demo Credentials
@@ -313,9 +321,7 @@ Expected result
 
 ```text
 PASS
-
-9 Tests
-29 Assertions
+Tests: 12 passed (42 assertions)
 ```
 
 ---
