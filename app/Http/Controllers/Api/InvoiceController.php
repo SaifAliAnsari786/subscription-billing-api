@@ -57,7 +57,10 @@ class InvoiceController extends Controller
     {
         $invoice = $this->invoiceService->generate($subscription);
 
-        return new InvoiceResource($invoice);
+        return response()->json([
+            'message' => 'Invoice generated successfully.',
+            'data' => new InvoiceResource($invoice),
+        ]);
     }
 
     /**
@@ -87,9 +90,7 @@ class InvoiceController extends Controller
             'items',
         ]);
 
-        // Customer can only view their own invoices
         if (auth()->user()->role === 'customer') {
-
             $query->whereHas('customer', function ($query) {
                 $query->where('user_id', auth()->id());
             });
@@ -134,7 +135,6 @@ class InvoiceController extends Controller
     )]
     public function show(Invoice $invoice)
     {
-        // Customer can only access their own invoice
         if (
             auth()->user()->role === 'customer' &&
             $invoice->customer->user_id !== auth()->id()
@@ -144,12 +144,15 @@ class InvoiceController extends Controller
             ], 403);
         }
 
-        return new InvoiceResource(
-            $invoice->load([
-                'customer',
-                'subscription',
-                'items',
-            ])
-        );
+        return response()->json([
+            'message' => 'Invoice retrieved successfully.',
+            'data' => new InvoiceResource(
+                $invoice->load([
+                    'customer',
+                    'subscription',
+                    'items',
+                ])
+            ),
+        ]);
     }
 }
