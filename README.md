@@ -2,9 +2,11 @@
 
 ## Overview
 
-This project is a RESTful API built with Laravel 12 for managing subscription billing and usage-based invoicing. It provides subscription lifecycle management, usage event tracking, automated invoice generation, and role-based access control.
+Subscription Billing & Metering API is a RESTful application built with Laravel 12 for managing subscription-based billing. It allows customers to subscribe to plans, records metered usage events, calculates monthly billing, generates invoices, and provides secure APIs for subscription management.
 
-The application is containerized using Docker and documented with Swagger (OpenAPI). Automated feature tests are included to verify the core business functionality.
+The application uses Laravel Sanctum for authentication, Docker for containerized development, Swagger (OpenAPI) for API documentation, and includes automated feature tests for the core business workflows.
+
+---
 
 ## Technology Stack
 
@@ -15,6 +17,8 @@ The application is containerized using Docker and documented with Swagger (OpenA
 - Laravel Sanctum
 - Docker & Docker Compose
 - Swagger (L5 Swagger)
+
+---
 
 ## Features
 
@@ -33,7 +37,7 @@ The application is containerized using Docker and documented with Swagger (OpenA
 
 ### Usage Metering
 
-- Record customer usage events
+- Record usage events
 - Idempotent request handling
 - Prevent duplicate usage records
 
@@ -48,6 +52,7 @@ The application is containerized using Docker and documented with Swagger (OpenA
 
 ### Authorization
 
+- Role-based access control
 - Administrators can access all invoices
 - Customers can access only their own invoices
 
@@ -57,6 +62,9 @@ The application is containerized using Docker and documented with Swagger (OpenA
 - Dockerized development environment
 - Swagger API documentation
 - Automated feature tests
+- Database seeders with demo data
+
+---
 
 ## Project Structure
 
@@ -71,8 +79,9 @@ app/
 ├── Services/
 
 database/
-├── migrations/
 ├── factories/
+├── migrations/
+├── seeders/
 
 routes/
 
@@ -81,12 +90,15 @@ tests/
 └── Unit/
 ```
 
+---
+
 ## Getting Started
 
 ### Clone the Repository
 
 ```bash
 git clone https://github.com/SaifAliAnsari786/subscription-billing-api.git
+
 cd subscription-billing-api
 ```
 
@@ -114,19 +126,54 @@ docker-compose exec app composer install
 docker-compose exec app php artisan key:generate
 ```
 
-### Run Database Migrations
+### Run Database Migrations and Seed Demo Data
 
 ```bash
-docker-compose exec app php artisan migrate
+docker-compose exec app php artisan migrate:fresh --seed
 ```
+
+This command creates:
+
+- Demo users
+- Subscription plans
+- Sample customer
+- Active subscription
+
+---
+
+## Demo Credentials
+
+### Administrator
+
+```text
+Email: admin@test.com
+Password: password
+```
+
+### Customer
+
+```text
+Email: customer@test.com
+Password: password
+```
+
+---
 
 ## Running the Application
 
-Application URL
+Application
 
 ```text
 http://localhost:8000
 ```
+
+Swagger Documentation
+
+```text
+http://localhost:8000/api/documentation
+```
+
+---
 
 ## Docker Commands
 
@@ -154,12 +201,14 @@ Access the application container
 docker-compose exec app bash
 ```
 
+---
+
 ## Common Artisan Commands
 
-Run migrations
+Run migrations with seeders
 
 ```bash
-docker-compose exec app php artisan migrate
+docker-compose exec app php artisan migrate:fresh --seed
 ```
 
 Generate Swagger documentation
@@ -192,19 +241,7 @@ Clear application cache
 docker-compose exec app php artisan optimize:clear
 ```
 
-## API Documentation
-
-Generate Swagger documentation
-
-```bash
-docker-compose exec app php artisan l5-swagger:generate
-```
-
-Swagger UI
-
-```text
-http://localhost:8000/api/documentation
-```
+---
 
 ## Authentication
 
@@ -216,25 +253,27 @@ POST /api/login
 
 Use the returned Bearer token when accessing protected endpoints.
 
-Example:
+Example
 
 ```text
 Authorization: Bearer YOUR_ACCESS_TOKEN
 ```
+
+---
 
 ## API Endpoints
 
 ### Authentication
 
 | Method | Endpoint |
-|--------|----------|
+|---------|----------|
 | POST | `/api/login` |
 | POST | `/api/logout` |
 
 ### Subscriptions
 
 | Method | Endpoint |
-|--------|----------|
+|---------|----------|
 | POST | `/api/subscriptions` |
 | POST | `/api/subscriptions/{subscription}/change-plan` |
 | POST | `/api/subscriptions/{subscription}/cancel` |
@@ -242,16 +281,18 @@ Authorization: Bearer YOUR_ACCESS_TOKEN
 ### Usage Events
 
 | Method | Endpoint |
-|--------|----------|
+|---------|----------|
 | POST | `/api/usage` |
 
 ### Invoices
 
 | Method | Endpoint |
-|--------|----------|
+|---------|----------|
 | POST | `/api/subscriptions/{subscription}/invoice` |
 | GET | `/api/invoices` |
 | GET | `/api/invoices/{invoice}` |
+
+---
 
 ## Running Tests
 
@@ -268,6 +309,17 @@ Current test coverage includes:
 - Usage Events
 - Invoice APIs
 
+Expected result
+
+```text
+PASS
+
+9 Tests
+29 Assertions
+```
+
+---
+
 ## Scheduled Invoice Generation
 
 Generate invoices manually
@@ -281,6 +333,14 @@ Run the scheduler
 ```bash
 docker-compose exec app php artisan schedule:run
 ```
+
+View scheduled tasks
+
+```bash
+docker-compose exec app php artisan schedule:list
+```
+
+---
 
 ## Assignment Coverage
 
@@ -298,9 +358,13 @@ This implementation includes:
 - Invoice listing
 - Invoice details
 - Role-based authorization
+- Scheduled invoice generation
 - Docker support
-- Swagger documentation
+- Swagger (OpenAPI) documentation
 - Automated feature tests
+- Database seeders with demo data
+
+---
 
 ## Author
 
