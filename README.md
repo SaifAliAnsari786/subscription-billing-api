@@ -110,8 +110,35 @@ cp .env.example .env
 
 ### Start Docker Containers
 
+If your system uses the legacy Compose binary (`docker-compose`):
+
 ```bash
 docker-compose up -d --build
+```
+
+If your system supports Compose V2 (`docker compose`):
+
+```bash
+docker compose up -d --build
+```
+
+To install the Compose V2 CLI plugin for your user (no sudo required):
+
+```bash
+mkdir -p ~/.docker/cli-plugins
+curl -SL https://github.com/docker/compose/releases/download/v2.18.1/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
+chmod +x ~/.docker/cli-plugins/docker-compose
+```
+
+Or install Docker and the Compose plugin system-wide on Ubuntu (recommended on shared machines):
+
+```bash
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl gnupg lsb-release
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmour -o /usr/share/keyrings/docker-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 ```
 
 ### Install Dependencies
