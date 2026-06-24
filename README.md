@@ -406,3 +406,7 @@ This implementation includes:
 Laravel Developer
 
 GitHub: https://github.com/SaifAliAnsari786/subscription-billing-api
+
+### Swagger UI
+
+![Swagger UI](docs/images/swagger-ui.png)
